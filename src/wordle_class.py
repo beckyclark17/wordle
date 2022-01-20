@@ -19,8 +19,8 @@ class Wordle():
         self.must_not_have_letters = must_not_have_letters
         
     def get_5_letter_words(self):
-        with open('dictionary_compact.json', 'r') as f:
-            words = pd.Series(json.load(f).keys())
+        with open('./dictionary_compact.json', 'r') as f:
+            words = pd.DataFrame(json.load(f).keys())[0]
         return list(words[words.str.len() == 5].values)
     
     def shortlist_must_haves(self):
