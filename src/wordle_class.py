@@ -27,15 +27,18 @@ class Wordle():
         """Find words with the required letters
         """
         five_letter_words = self.get_5_letter_words()
-        word_shortlist = []
-        for word in five_letter_words:
-            word = word.lower()
-            got_must_haves = 0
-            for letter in self.must_have_letters.keys():
-                got_must_haves += (letter in word) * 1
-            if got_must_haves == len(self.must_have_letters):
-                word_shortlist.append(word)
-        return word_shortlist
+        if self.must_have_letters is not None:
+            word_shortlist = []
+            for word in five_letter_words:
+                word = word.lower()
+                got_must_haves = 0
+                for letter in self.must_have_letters.keys():
+                    got_must_haves += (letter in word) * 1
+                if got_must_haves == len(self.must_have_letters):
+                    word_shortlist.append(word)
+            return word_shortlist
+        else:
+            return five_letter_words
     
     def _filter_dict(self):
         """Filter dictionary to leave only letters with a
@@ -51,15 +54,17 @@ class Wordle():
         """Second run over the shortlist specifying 
         the correct location of a word if known.
         """
+        
         words = self.shortlist_must_haves()
-        loc_dict = self._filter_dict()
-        words_to_remove = []
-        for word in words:
-            for k, v in loc_dict.items():
-                if word[v] != k:
-                    words_to_remove.append(word)
-        for word in np.unique(words_to_remove):
-            words.remove(word)
+        if self.must_have_letters is not None:
+            loc_dict = self._filter_dict()
+            words_to_remove = []
+            for word in words:
+                for k, v in loc_dict.items():
+                    if word[v] != k:
+                        words_to_remove.append(word)
+            for word in np.unique(words_to_remove):
+                words.remove(word)
         return words
     
     def shortlist_must_not_have(self):
@@ -80,4 +85,4 @@ class Wordle():
     def get_help(self):
         """Function pulls the above together, returns final shortlist.
         """        
-        return self.shortlist_must_not_have()
+        return sorted(self.shortlist_must_not_have())
